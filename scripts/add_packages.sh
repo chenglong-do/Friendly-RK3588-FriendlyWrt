@@ -31,3 +31,49 @@ function init_theme() {
 EOL
 sed -i -e '/boardname=/r /tmp/appendtext.txt' friendlywrt/target/linux/rockchip/armv8/base-files/root/setup.sh
 # }}
+
+# {{ Add luci-app-lucky
+(cd friendlywrt/package && {
+    [ -d luci-app-lucky ] && rm -rf luci-app-lucky
+    git clone https://github.com/gdy666/luci-app-lucky.git --depth 1
+})
+cat >> configs/rockchip/01-nanopi <<EOL
+CONFIG_PACKAGE_luci-compat=y
+CONFIG_PACKAGE_luci-lua-runtime=y
+CONFIG_PACKAGE_luci-base=y
+CONFIG_PACKAGE_luci-app-lucky=y
+EOL
+# }}
+
+# {{ Add luci-app-openclash
+(cd friendlywrt/package && {
+    [ -d OpenClash ] && rm -rf OpenClash
+    git clone https://github.com/vernesong/OpenClash.git --depth 1
+})
+cat >> configs/rockchip/01-nanopi <<EOL
+CONFIG_PACKAGE_bash=y
+CONFIG_PACKAGE_curl=y
+CONFIG_PACKAGE_ruby=y
+CONFIG_PACKAGE_ruby-yaml=y
+CONFIG_PACKAGE_unzip=y
+CONFIG_PACKAGE_luci-app-openclash=y
+EOL
+# }}
+
+# {{ Add luci-app-nikki
+(cd friendlywrt/package && {
+    [ -d OpenClash ] && rm -rf OpenClash
+    git clone https://github.com/nikkinikki-org/OpenWrt-nikki --depth 1
+})
+cat >> configs/rockchip/01-nanopi <<EOL
+CONFIG_PACKAGE_luci-app-nikki=y
+CONFIG_PACKAGE_luci-app-homeproxy=y
+EOL
+# }}
+
+cat >> configs/rockchip/01-nanopi <<EOL
+CONFIG_PACKAGE_luci-app-ttyd=y
+CONFIG_PACKAGE_luci-app-upnp=y
+CONFIG_PACKAGE_luci-app-vlmcsd=y
+CONFIG_PACKAGE_luci-app-uhttpd=y
+EOL

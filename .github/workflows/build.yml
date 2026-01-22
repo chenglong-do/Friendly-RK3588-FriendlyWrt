@@ -30,8 +30,9 @@ jobs:
     if: github.event.repository.owner.id == github.event.sender.id
     strategy:
       matrix:
-        VERSION: ['23.05', '24.10']
-        SET: [docker, non-docker]
+        VERSION: ['24.10']
+        # SET: [docker, non-docker]
+        SET: [non-docker]
 
     steps:
     - name: Checkout
@@ -139,9 +140,11 @@ jobs:
 
     strategy:
       matrix:
-        VERSION: ['23.05', '24.10']
-        CPU: [rk3328, rk3528, rk3399, rk3566, rk3568, rk3576, rk3588]
-        SET: [docker, non-docker]
+        VERSION: ['24.10']
+        # CPU: [rk3328, rk3528, rk3399, rk3566, rk3568, rk3576, rk3588]
+        CPU: [rk3588]
+        # SET: [docker, non-docker]
+        SET: [non-docker]
     steps:
     - name: Checkout
       uses: actions/checkout@main
@@ -208,24 +211,6 @@ jobs:
       run: |
         cd project
         case ${{ matrix.CPU }} in
-        rk3328)
-          MODEL=R2S-R2C-Series
-          ;;
-        rk3528)
-          MODEL=NanoPi-Zero2
-          ;;
-        rk3399)
-          MODEL=R4S-Series
-          ;;
-        rk3568)
-          MODEL=R5S-R5C-Series
-          ;;
-        rk3566)
-          MODEL=R3S-Series
-          ;;
-        rk3576)
-          MODEL=M5-R76S-Series
-          ;;
         rk3588)
           MODEL=T6-R6S-R6C-M6-Series
           ;;
