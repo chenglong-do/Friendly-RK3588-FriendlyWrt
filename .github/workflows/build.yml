@@ -104,8 +104,8 @@ jobs:
       continue-on-error: true
       run: |
         cd project/friendlywrt
-        chmod +x ../scripts/fix_rust.sh
-        source ../scripts/fix_rust.sh
+        chmod +x ../../scripts/fix_rust.sh
+        source ../../scripts/fix_rust.sh
         make -j$(nproc) || make -j1 V=s
         echo $?
 
