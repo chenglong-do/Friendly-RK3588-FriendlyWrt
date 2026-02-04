@@ -62,18 +62,31 @@ EOL
 
 # {{ Add luci-app-nikki
 (cd friendlywrt/package && {
-    [ -d OpenClash ] && rm -rf OpenClash
+    [ -d OpenWrt-nikki ] && rm -rf OpenWrt-nikki
     git clone https://github.com/nikkinikki-org/OpenWrt-nikki --depth 1
 })
 cat >> configs/rockchip/01-nanopi <<EOL
 CONFIG_PACKAGE_luci-app-nikki=y
-CONFIG_PACKAGE_luci-app-homeproxy=y
+EOL
+# }}
+
+# {{ Add luci-app-nikki
+(cd friendlywrt/package && {
+    [ -d luci-app-vlmcsd ] && rm -rf luci-app-vlmcsd
+    git clone https://github.com/DokiDuck/luci-app-vlmcsd.git --depth 1
+})
+cat >> configs/rockchip/01-nanopi <<EOL
+CONFIG_PACKAGE_luci-app-vlmcsd=y
 EOL
 # }}
 
 cat >> configs/rockchip/01-nanopi <<EOL
 CONFIG_PACKAGE_luci-app-ttyd=y
 CONFIG_PACKAGE_luci-app-upnp=y
-CONFIG_PACKAGE_luci-app-vlmcsd=y
 CONFIG_PACKAGE_luci-app-uhttpd=y
+
+CONFIG_PACKAGE_luci-app-aria2=n
+CONFIG_PACKAGE_luci-app-ddns=n
+CONFIG_PACKAGE_luci-app-minidlna=n
+CONFIG_PACKAGE_luci-app-samba4=n
 EOL
