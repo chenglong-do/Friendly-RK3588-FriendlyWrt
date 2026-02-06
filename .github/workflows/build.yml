@@ -88,7 +88,7 @@ jobs:
       with:
         ccache: 'true'
         mixkey: 'friendlywrt-rk35XX'
-        prefix: 'openwrt'
+        prefix: env.PROJECT_PATH
 
     - name: Apply customizations
       run: |
