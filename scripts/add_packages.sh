@@ -70,7 +70,7 @@ CONFIG_PACKAGE_luci-app-nikki=y
 EOL
 # }}
 
-# {{ Add luci-app-nikki
+# {{ Add luci-app-vlmcsd
 (cd friendlywrt/package && {
     [ -d luci-app-vlmcsd ] && rm -rf luci-app-vlmcsd
     git clone https://github.com/DokiDuck/luci-app-vlmcsd.git --depth 1
