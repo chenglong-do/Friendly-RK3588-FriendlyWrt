@@ -6,40 +6,18 @@
 - 后台IP：192.168.2.1
 - 固件下载地址： https://github.com/friendlyarm/Actions-FriendlyWrt/releases
 - 更多使用说明: https://wiki.friendlyelec.com/wiki/index.php/Template:FriendlyWrt21/zh
-### 固件说明
-- 同一固件文件同时支持安装至SD和eMMC，不作区分
-- 添加 lucky、nikki、openclash、vlmcsd、watchcat、wol、ttyd、upnp、uhttpd
-- 去除 shadowsocks 相关依赖
-
-### Ubuntu 本地编译（不上传 Release）
-- 新增脚本：`scripts/local_build_ubuntu.sh`
-- 目标：把 GitHub Actions 的“拉代码 + 客制化 + 编译”流程搬到 Ubuntu 本地执行，不包含上传发布步骤
-- 默认会执行完整流程（`friendlywrt + image`），产物输出到 `local-build/artifact/`
-
-常用命令：
-
-```bash
-# 仅编译 friendlywrt（含客制化）
-bash scripts/local_build_ubuntu.sh --mode friendlywrt
-
-# 完整流程：friendlywrt + 打包镜像（默认行为）
-bash scripts/local_build_ubuntu.sh --mode all --version 25.12 --cpu rk3588
-
-# 仅打包镜像（需先有 rootfs/host-pm 产物）
-bash scripts/local_build_ubuntu.sh --mode image
-```
-
-可选参数：
-- `--skip-init`：跳过环境初始化（已安装依赖和 `repo` 时可用）
-- `--skip-custom`：跳过 `scripts/add_packages.sh` 与 `scripts/custome_config.sh`
-- `--with-kernel-config`：在镜像编译前执行 `scripts/custome_kernel_config.sh`
-- `--workdir <目录>`：指定工作目录（默认 `./local-build`）
-- `--jobs <并行数>`：指定编译并行度（默认 `nproc`）
-
-> 注意：该脚本仅支持在 Linux/Ubuntu 运行。首次运行会调用 `sudo` 安装/准备编译环境。
-### 如何将固件写入eMMC  
-- 先将固件写入一张SD卡，然后从SD启动系统，访问FriendyWrt后台页面，进入菜单“系统”->“eMMC刷机助手”，上传固件文件直接刷入即可，文件无需解压，写入完成后，将SD卡弹出, 设备会自动重启并从eMMC引导系统。
+### 固件文件说明
+- XYZ.img.gz：固件镜像，可写入 SD 卡或 eMMC 启动。
+- images-XYZ.tgz：升级包，仅供 "eMMC 刷机助手" 使用，不能直接写入 SD 卡启动。
+### 如何刷入 eMMC
+- 首次安装：先将 XYZ.img.gz 写入 SD 卡并启动系统，进入 FriendlyWrt 后台 → "系统" → "eMMC 刷机助手"，上传固件直接刷入（无需解压）。完成后弹出 SD 卡，设备会自动重启并从 eMMC 启动。
+- 小版本升级（如 25.12.2 → 25.12.3）：在 "eMMC 刷机助手" 中刷入 images-XXYYZZ.tgz，可选择保留数据，但兼容性需自行评估。
+- 大版本升级（如 24.10 → 25.12）：建议先[备份配置](https://openwrt.org/docs/guide-user/troubleshooting/backup_restore)，然后使用 XYZ.img.gz 全量安装，以避免兼容性问题。
 ### 更新说明
+* 2026/04/29
+    *  更新到新版本 openwrt-25.12.2
+    *  更新了"eMMC 刷机助手"，加强稳定性，支持更多格式
+    *  内核启用内置fq_codel队列调度以改善网络延迟
 * 2026/03/06
     * 增加 NanoPi-NEO3-Plus 支持
 * 2025/12/31

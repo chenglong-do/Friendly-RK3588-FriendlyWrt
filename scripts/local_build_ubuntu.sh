@@ -133,8 +133,13 @@ prepare_host() {
   need_cmd sed
   need_cmd tar
 
+  # Always ensure essential build deps are present, regardless of --skip-init.
+  check_extra_deps
+
   if [[ "$SKIP_INIT" -eq 1 ]]; then
-    log "skip host initialization"
+    log "skip host initialization (--skip-init)"
+    # Still ensure repo is available even when skipping full init.
+    ensure_repo
     return
   fi
 
@@ -151,9 +156,57 @@ prepare_host() {
   run_checked git config --global user.email 'local@localhost'
   run_checked git config --global color.ui false
 
+  ensure_repo
+}
+
+# Install Python pyelftools, cmake, and other deps that the FriendlyArm
+# install.sh may not pull in but are needed by OpenWrt's host tools.
+check_extra_deps() {
+  local missing=()
+
+  # python3-pyelftools is needed by u-boot/linux host tools
+  if ! python3 -c "import elftools" 2>/dev/null; then
+    missing+=(python3-pyelftools)
+  fi
+
+  # cmake needed by tools/libdeflate and others
+  if ! command -v cmake >/dev/null 2>&1; then
+    missing+=(cmake)
+  fi
+
+  local extra_pkgs=(
+    zlib1g-dev
+    liblzma-dev
+    libzstd-dev
+    libssl-dev
+    libncurses5-dev
+    libncursesw5-dev
+    unzip
+    git
+    build-essential
+  )
+
+  local pkg
+  for pkg in "${extra_pkgs[@]}"; do
+    if ! dpkg -s "$pkg" >/dev/null 2>&1; then
+      missing+=("$pkg")
+    fi
+  done
+
+  if [[ ${#missing[@]} -gt 0 ]]; then
+    log "installing missing build dependencies: ${missing[*]}"
+    run_checked sudo apt-get update -qq
+    run_checked sudo apt-get install -y "${missing[@]}"
+  else
+    log "all extra build dependencies already satisfied"
+  fi
+}
+
+ensure_repo() {
   if ! command -v repo >/dev/null 2>&1; then
-    local repo_dir="${WORKDIR}/repo"
-    run_checked git clone https://github.com/friendlyarm/repo "$repo_dir"
+    log "'repo' not found, installing from friendlyarm/repo"
+    local repo_dir="${WORKDIR}/repo-tool"
+    [[ -d "$repo_dir" ]] || run_checked git clone https://github.com/friendlyarm/repo "$repo_dir"
     run_checked sudo -E cp "$repo_dir/repo" /usr/bin/
   fi
 }

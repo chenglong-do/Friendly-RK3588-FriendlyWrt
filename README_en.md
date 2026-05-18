@@ -6,38 +6,18 @@
 - IP：192.168.2.1
 - Download： https://github.com/friendlyarm/Actions-FriendlyWrt/releases
 - Document: https://wiki.friendlyelec.com/wiki/index.php/Template:FriendlyWrt21/zh
-### About image file
-- The same image file supports installation to both SD and eMMC
-
-### Ubuntu Local Build (no Release upload)
-- New script: `scripts/local_build_ubuntu.sh`
-- Goal: run the GitHub Actions style flow locally on Ubuntu (fetch source + customization + compile), without upload/publish steps
-- Default mode runs full flow (`friendlywrt + image`) and writes outputs to `local-build/artifact/`
-
-Common commands:
-
-```bash
-# Build friendlywrt only (with customization)
-bash scripts/local_build_ubuntu.sh --mode friendlywrt
-
-# Full local flow: friendlywrt + image
-bash scripts/local_build_ubuntu.sh --mode all --version 25.12 --cpu rk3588
-
-# Build image only (requires rootfs/host-pm artifacts first)
-bash scripts/local_build_ubuntu.sh --mode image
-```
-
-Useful options:
-- `--skip-init`: skip environment initialization (if dependencies and `repo` are already ready)
-- `--skip-custom`: skip `scripts/add_packages.sh` and `scripts/custome_config.sh`
-- `--with-kernel-config`: apply `scripts/custome_kernel_config.sh` before image build
-- `--workdir <dir>`: set workspace directory (default: `./local-build`)
-- `--jobs <n>`: set make parallelism (default: `nproc`)
-
-> Note: this script is intended for Linux/Ubuntu only. First run requires `sudo` to prepare build environment.
-### How to write image to eMMC  
-- First write the image to an SD card, then boot the system from the SD card, visit the FriendyWrt admin page, go to the menu "System" -> "eMMC Tools", upload the image file and flash it in directly, no need to decompress the file, after the flashing is completed, eject the SD card, the device will automatically reboot and boot from the eMMC.
+### About the Files
+- XYZ.img.gz: SD/eMMC system image. Can be written to an SD card or eMMC to boot.
+- images-XYZ.tgz: Upgrade package. For use with the "eMMC Tools" only; cannot be written directly to an SD card to boot.
+### How to Flash to eMMC
+- First-time installation: Write XYZ.img.gz to an SD card and boot the system. Go to the FriendlyWrt admin panel → "System" → "eMMC Tools" and upload the file to flash it directly (no need to decompress). When it finishes, eject the SD card and the device will automatically reboot from eMMC.
+- Minor version upgrade (e.g., 25.12.2 → 25.12.3): Flash images-XXYYZZ.tgz via the "eMMC Tools". You may choose to keep existing data, but compatibility should be evaluated on your own.
+- Major version upgrade (e.g., 24.10 → 25.12): It is recommended to [back up your configuration](https://openwrt.org/docs/guide-user/troubleshooting/backup_restore) first, then perform a full installation using XYZ.img.gz to avoid compatibility issues.
 ### Changelog
+* 2026/04/29
+    *  Updated to openwrt-25.12.2
+    *  Updated the "eMMC Tools" to improved stability and support for more formats
+    *  Enabled built-in fq_codel queue scheduler in kernel to improve network latency
 * 2026/03/06
     * Added support for NanoPi‑NEO3-Plus
 * 2025/12/31
