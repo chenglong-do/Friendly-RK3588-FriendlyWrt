@@ -14,6 +14,7 @@ SKIP_CUSTOM=0
 SKIP_MAKE_DOWNLOAD=0
 WITH_KERNEL_CONFIG=0
 NO_RUST_PATCH=0
+CLEAN_GO_CACHE=0
 JOBS=""
 
 usage() {
@@ -32,6 +33,7 @@ Options:
   --skip-make-download        Skip make download stage
   --with-kernel-config        Apply scripts/custome_kernel_config.sh during image build
   --no-rust-patch             Do not patch rust Makefile
+  --clean-go-cache            Remove problematic Go module cache entries before build
   -h, --help                  Show this help message
 
 Examples:
@@ -106,6 +108,10 @@ parse_args() {
         NO_RUST_PATCH=1
         shift
         ;;
+      --clean-go-cache)
+        CLEAN_GO_CACHE=1
+        shift
+        ;;
       -h|--help)
         usage
         exit 0
@@ -175,6 +181,8 @@ check_extra_deps() {
   fi
 
   local extra_pkgs=(
+    python3
+    python3-dev
     zlib1g-dev
     liblzma-dev
     libzstd-dev
@@ -208,6 +216,16 @@ ensure_repo() {
     local repo_dir="${WORKDIR}/repo-tool"
     [[ -d "$repo_dir" ]] || run_checked git clone https://github.com/friendlyarm/repo "$repo_dir"
     run_checked sudo -E cp "$repo_dir/repo" /usr/bin/
+  fi
+}
+
+clean_go_cache() {
+  local project_dir="${WORKDIR}/project-friendlywrt/friendlywrt"
+  local cache_dir="${project_dir}/dl/go-mod-cache/github.com/metacubex"
+
+  if [[ "$CLEAN_GO_CACHE" -eq 1 ]] && [[ -d "$cache_dir" ]]; then
+    log "cleaning Go module cache under ${cache_dir}"
+    run_checked rm -rf "${cache_dir}/protobuf-go@"* "${cache_dir}/tailscale@"* "${cache_dir}/mihomo@"*
   fi
 }
 
@@ -272,6 +290,8 @@ EOF
     find dl -size -1024c -exec rm -f {} \;
     popd >/dev/null
   fi
+
+  clean_go_cache
 
   pushd friendlywrt >/dev/null
   if [[ "$NO_RUST_PATCH" -eq 0 ]] && [[ -f package/feeds/packages/rust/Makefile ]]; then

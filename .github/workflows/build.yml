@@ -119,7 +119,7 @@ jobs:
     - name: Download package
       run: |
         cd project/friendlywrt
-        make download -j8
+        make download -j$(nproc)
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
 
