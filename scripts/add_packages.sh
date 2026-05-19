@@ -88,13 +88,13 @@ EOL
 # }}
 
 # {{ Add luci-app-vlmcsd
-(cd friendlywrt/package && {
-    [ -d luci-app-vlmcsd ] && rm -rf luci-app-vlmcsd
-    git clone https://github.com/DokiDuck/luci-app-vlmcsd.git --depth 1
-})
-cat >> configs/rockchip/01-nanopi <<EOL
-CONFIG_PACKAGE_luci-app-vlmcsd=y
-EOL
+#(cd friendlywrt/package && {
+#    [ -d luci-app-vlmcsd ] && rm -rf luci-app-vlmcsd
+#    git clone https://github.com/DokiDuck/luci-app-vlmcsd.git --depth 1
+#})
+#cat >> configs/rockchip/01-nanopi <<EOL
+#CONFIG_PACKAGE_luci-app-vlmcsd=y
+#EOL
 # }}
 
 cat >> configs/rockchip/01-nanopi <<EOL
